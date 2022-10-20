@@ -29,4 +29,5 @@ for (let i = 0; i < num.length; i++) {
 }
 console.log(sum);
 sum = String(sum**3);
+
 console.log(sum.substr(0,2));
