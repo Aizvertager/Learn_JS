@@ -1,30 +1,15 @@
-//1. Задание
-let ruDay = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
-let engDay = ['mn', 'ts', 'wd', 'th', 'fr', 'st', 'sn'];
-
-let lang = prompt('Введите на каком языке хотите вывести инф', 'ru или eng');
-
-if (lang == 'ru') {
-    console.log(ruDay);
-} else if (lang == 'eng') {
-    console.log(engDay)
-} else {
-    console('Вы ввели неверно')
+function Test(a) {
+    if (typeof(a) === 'string') {
+        console.log('Передана строка');
+        a = a.trim();
+        console.log(a);
+    } else if (a.length > 30) {
+        a = a.substring(0, 29);
+        a = a + '...';
+        console.log(a);
+    } else {
+        console.log('Передана не строка');
+    }
 }
 
-switch (lang) {
-    case 'ru':
-        console.log(ruDay);
-        break;
-    case 'eng':
-        console.log(engDay);
-        break;
-    default:
-        console.log('Вы ввели неверно') 
-}
-
-var arr = {
-	'ru':['пн', 'вт', 'ср','чт', 'пт', 'сб', 'вс'],
-	'eng':['mn', 'ts', 'wd', 'th', 'fr', 'st', 'sn'],
-};
-alert(arr[lang]);
+Test(5);
