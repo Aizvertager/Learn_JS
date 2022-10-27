@@ -1,0 +1,23 @@
+'use strict';
+
+let calculateBtn = document.querySelector('#start'),
+    resetBtn = document.querySelector('#cancel'),
+    salaryAmount = document.querySelector('.salary-amount'),
+    incomeTitle = document.querySelector('.income-title'),
+    incomeAmount = document.querySelector('.income-amount'), 
+    incomeBtnPlus = document.querySelector('.income_add'),
+    expensesBtnPlus = document.querySelector('.expenses_add'),
+    depositCheck = document.querySelector('#deposit-check'),
+    targetAmount = document.querySelector('.target-amount'),
+    periodSelect = document.querySelector('.period-select'),
+    additionalIncomes = document.querySelectorAll('.additional_income-item'),
+    additionalExpenses = document.querySelector('.additional_expenses-item'),
+    expensesTitle = document.querySelector('.expenses-title'),
+    expensesAmount = document.querySelector('.expenses-amount'), 
+    budgetMonth = document.querySelector('.budget_month-value'),
+    budgetDay = document.querySelector('.budget_day-value'),
+    expensesMonth = document.querySelector('.expenses_month-value'),
+    additionalIncomeValue = document.querySelector('.additional_income-value'),
+    additionalExpensesValue = document.querySelector('.additional_expenses-value'),
+    incomePeriod = document.querySelector('.income_period-value'),
+    targetMonth = document.querySelector('.target_month-value');
