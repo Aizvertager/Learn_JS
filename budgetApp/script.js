@@ -15,8 +15,6 @@ let start = document.querySelector('#start'),
     incomePeriodValue = document.querySelector('.income_period-value'),
     targetMonthValue = document.querySelector('.target_month-value'),
     salaryAmount = document.querySelector('.salary-amount'),
-    incomeTitle = document.querySelector('.income-title'),
-    incomeAmount = document.querySelector('.income-amount'), 
     expensesTitle = document.querySelector('.expenses-title'),
     expensesItems = document.querySelectorAll('.expenses-items'),
     incomeItems = document.querySelectorAll('.income-items'),
@@ -66,21 +64,27 @@ let appData = {
         resetBtn.style.display = 'block';
     },
     showResult: function() {
-        budgetMonthValue.value = appData.budgetMonth;
-        budgetDayValue.value = Math.round(appData.budgetDay);
-        expensesMonthValue.value = appData.expensesMonth;
+        budgetMonthValue.value = this.budgetMonth;
+        budgetDayValue.value = Math.round(this.budgetDay);
+        expensesMonthValue.value = this.expensesMonth;
         //Из массива объединяем в строку
-        additionalExpensesValue.value = appData.addExpenses.join(', ');
-        additionalIncomeValue.value = appData.addIncome.join(', ');
-        targetMonthValue.value = Math.ceil(appData.getTargetMonth());
-        incomePeriodValue.value = appData.calcPeriod();
+        additionalExpensesValue.value = this.addExpenses.join(', ');
+        additionalIncomeValue.value = this.addIncome.join(', ');
+        targetMonthValue.value = Math.ceil(this.getTargetMonth());
+        incomePeriodValue.value = this.calcPeriod();
         
         periodSelect.addEventListener('input', function() {
             incomePeriodValue.value = periodSelect.value * appData.budget;
         });
     },
     addExpensesBlock: function() {
-        let cloneExpensesItem = expensesItems[0].cloneNode(true);
+        let cloneExpensesItem = expensesItems[0].cloneNode(true),
+            expensesTitle = cloneExpensesItem.querySelector('.expenses-title'),
+            expensesAmount = cloneExpensesItem.querySelector('.expenses-amount');
+
+        expensesTitle.value = '';
+        expensesAmount.value = '';
+
         expensesItems[0].parentNode.insertBefore(cloneExpensesItem, expensesPlus);
 
         expensesItems = document.querySelectorAll('.expenses-items');
@@ -89,7 +93,12 @@ let appData = {
         }
     },
     addIncomesBlock: function() {
-        let cloneIncomeItem = incomeItems[0].cloneNode(true);
+        let cloneIncomeItem = incomeItems[0].cloneNode(true),
+            incomeTitle = cloneIncomeItem.querySelector('.income-title'),
+            incomeAmount = cloneIncomeItem.querySelector('.income-amount');
+
+        incomeTitle.value = '';
+        incomeAmount.value = '';
         incomeItems[0].parentNode.insertBefore(cloneIncomeItem, incomePlus);
 
         incomeItems = document.querySelectorAll('.income-items');
@@ -103,18 +112,11 @@ let appData = {
                 cashExpenses = item.querySelector('.expenses-amount').value;
             
             if (itemExpenses !== '' && cashExpenses !== '') {
-                appData.expenses[itemExpenses] = cashExpenses;
+                appData.expenses[itemExpenses] = +cashExpenses;
             } 
         });
     },
     getIncome: function() {
-        /* 
-        if (confirm('Есть ли у вас дополнительный источник заработка?')) {
-            let itemIncome = prompt('Какой?', 'Таксую');
-            let cashIncome = prompt('Сколько в месяц зарабатываете на этом?', 10000);
-            appData.income[itemIncome] = cashIncome;
-        }
-        */
         incomeItems.forEach(function(item) {
             let itemIncome = item.querySelector('.income-title').value,
                 cashIncome = item.querySelector('.income-amount').value;
@@ -124,7 +126,7 @@ let appData = {
         });
 
         for (let key in appData.income) {
-            appData.incomeMonth += +appData.income[key];
+            this.incomeMonth += +appData.income[key];
         }
     },
     getAddExpenses: function() {
@@ -148,68 +150,39 @@ let appData = {
     },
     // Функция возвращает сумму всех расходов за месяц
     getExpensesMonth: function () {
-        for (let key in appData.expenses) {
-            appData.expensesMonth += appData.expenses[key];
+        for (let key in this.expenses) {
+            this.expensesMonth += this.expenses[key];
         }
     },
     // Функция возвращает Накопления за месяц (Доходы минус расходы)
     getBudget: function () {
-        appData.budgetMonth = appData.budget + appData.incomeMonth - appData.expensesMonth;
-        appData.budgetDay = Math.floor(appData.budgetMonth / 30);
+        this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth;
+        this.budgetDay = Math.floor(this.budgetMonth / 30);
     },
     /*Функция подсчитывает за какой период будет достигнута цель, зная результат месячного накопления*/
     getTargetMonth: function () {
         return Math.ceil(targetAmount.value / appData.budgetMonth);
     },
     calcPeriod: function() {
-        return appData.budgetMonth * periodSelect.value;
+        return this.budgetMonth * periodSelect.value;
     }
 
 };
 
-start.addEventListener('click', appData.start);
+start.addEventListener('click', appData.start.bind(appData));
 expensesPlus.addEventListener('click', appData.addExpensesBlock);
 incomePlus.addEventListener('click', appData.addIncomesBlock);
 periodSelect.addEventListener('input', function(event) {
     periodAmount.innerHTML = event.target.value;
 });
-
-
-
-let expensesAmount1 = appData.expensesMonth;
-
-
-if (appData.getTargetMonth() < 0) {
-    console.log('Цель не будет достигнута');
-} else {
-    console.log('Цель будет достигнута за ' + appData.getTargetMonth() + ' месяц/ев');
-}
-
-// Функция, которая выводит уровень заработка
-let getStatusIncome = function () {
-    if (appData.budgetDay > 800) { // > 27000
-        return ('Высокий уровень дохода'); 
-    } else if (appData.budgetDay > 300 && appData.budgetDay < 800) { // 9500
-        return ('Средний уровень дохода');
-    } else if (appData.budgetDay > 0 && appData.budgetDay < 300) { // 900
-        return ('Низкий уровень дохода');
-    } else {
-        return ('Что то пошло не так');
-    }
-};
- 
-// Статус заработка
-console.log(getStatusIncome());
-/*
-for (let key in appData) {
-    console.log('Наша программа включает в себя данные:');
-    console.log(appData);
-} */
-
-
-
-
-
+resetBtn.addEventListener('click', function() {
+    let allInputs = document.querySelectorAll('input[type=text]');
+    allInputs.forEach(function(item) {
+        item.value = '';
+    }); 
+    periodSelect.value = 1;
+    periodAmount.innerHTML = 1;
+});
     
     
     
