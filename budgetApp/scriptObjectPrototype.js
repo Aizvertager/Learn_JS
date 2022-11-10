@@ -6,6 +6,10 @@ let start = document.querySelector('#start'),
     expensesPlus = btnPlus[1],
     additionalIncomes = document.querySelectorAll('.additional_income-item'),
     depositCheck = document.querySelector('#deposit-check'),
+    depositBank = document.querySelector('.deposit-bank'),
+    depositAmount = document.querySelector('.deposit-amount'),
+    depositCalc = document.querySelector('.deposit-calc'),
+    depositPercent = document.querySelector('.deposit-percent'),
     budgetDayValue = document.querySelector('.budget_day-value'),
     budgetMonthValue = document.querySelector('.budget_month-value'),
     expensesMonthValue = document.querySelector('.expenses_month-value'),
@@ -31,6 +35,8 @@ const AppData = function() {
     this.expenses = {};
     this.addExpenses = [];
     this.deposit = false;
+    this.percentDeposit = 0;
+    this.moneyDeposit = 0;
     this.budget = 0;
     this.budgetDay = 0;
     this.budgetMonth = 0;
@@ -52,6 +58,7 @@ AppData.prototype.start = function() {
     this.getExpensesMonth();
     this.getAddExpenses();
     this.getAddIncome();
+    this.getInfoDeposit();
     this.getBudget();
     this.showResult();
 
@@ -79,6 +86,12 @@ AppData.prototype.showResult = function() {
     periodSelect.addEventListener('input', function() {
         incomePeriodValue.value = periodSelect.value * _this.budget;
     });
+};
+AppData.prototype.getInfoDeposit = function() {
+    if (this.deposit) {
+        this.percentDeposit = depositPercent.value;
+        this.moneyDeposit = depositAmount.value;
+    }
 };
 AppData.prototype.addExpensesBlock = function() {
     let cloneExpensesItem = expensesItems[0].cloneNode(true),
@@ -163,7 +176,7 @@ AppData.prototype.getExpensesMonth = function () {
 };
 // Функция возвращает Накопления за месяц (Доходы минус расходы)
 AppData.prototype.getBudget = function () {
-    this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth;
+    this.budgetMonth = this.budget + this.incomeMonth - this.expensesMonth + (this.moneyDeposit * this.percentDeposit) / 12;
     this.budgetDay = Math.floor(this.budgetMonth / 30);
 };
 /*Функция подсчитывает за какой период будет достигнута цель, зная результат месячного накопления*/
@@ -182,13 +195,39 @@ AppData.prototype.eventListeners = function() {
         periodAmount.innerHTML = event.target.value;
     });
 
+    depositCheck.addEventListener('change', function() {
+        if (depositCheck.checked) {
+            appData.deposit = true;
+            depositBank.style.display = 'inline-block';
+            depositAmount.style.display = 'inline-block';
+            depositBank.addEventListener('change', function() {
+                let selectedIndex = this.options[this.selectedIndex].value;
+                if (selectedIndex === 'other') {
+                    depositPercent.style.display = 'inline-block';
+                    depositPercent.value = '';
+                } else {
+                    depositPercent.style.display = 'none';
+                    depositPercent.value = selectedIndex;
+                }
+            });
+        } else {
+            appData.deposit = false;
+            depositBank.style.display = 'none';
+            depositAmount.style.display = 'none';
+            depositAmount.value = '';
+        }
+    });
+
     resetBtn.addEventListener('click', function() {
         let allInputs = document.querySelectorAll('input[type=text]');
         allInputs.forEach(function(item) {
             item.value = '';
+            item.disabled = false;
         }); 
         periodSelect.value = 1;
         periodAmount.innerHTML = 1;
+        start.style.display = 'block';
+        resetBtn.style.display = 'none';
     });    
 };
 
