@@ -24,6 +24,7 @@ let start = document.querySelector('#start'),
     resetBtn = document.querySelector('#cancel'),
     targetAmount = document.querySelector('.target-amount');
 
+    //Объект
 let appData = {
     income: {},
     incomeMonth: 0,
