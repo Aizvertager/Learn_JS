@@ -1,0 +1,18 @@
+.square {
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+    background: blueviolet;
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.button {
+    background: #a17ebb;
+    border-radius: 15px;
+    padding: 10px;
+    font-size: 14px;
+    border-color: aliceblue;
+    color: #fff;
+    cursor: pointer;
+}
