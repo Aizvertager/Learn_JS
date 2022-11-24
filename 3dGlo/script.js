@@ -3,7 +3,8 @@
 window.addEventListener('DOMContentLoaded', () => {
     'use strict';
 
-    function countTimer(deadline) {
+    // Таймер
+    const countTimer = function(deadline) {
         let timerHours = document.querySelector('#timer-hours'),
             timerMinutes = document.querySelector('#timer-minutes'),
             timerSeconds = document.querySelector('#timer-seconds');
@@ -44,9 +45,8 @@ window.addEventListener('DOMContentLoaded', () => {
         }
 
         // Реализация с помощью setInterval
-        let updateClock = function() {
+        const updateClock = function() {
             let time = timeRemaining();
-            console.log('time: ', time);
             if (time.dateRemaining < 0){
                 timerHours.textContent = '00';
                 timerMinutes.textContent = '00';
@@ -59,11 +59,75 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        let startTimer = setInterval(updateClock, 1000);
+        const startTimer = setInterval(updateClock, 1000);
 
-    }
+    };
 
-    countTimer('22 november 2022');
+    countTimer('21 november 2022');
 
+    // Меню
+
+    const toggleMenu = () => {
+        const menuBtn = document.querySelector('.menu'),
+              menu = document.querySelector('menu'),
+              closeBtn = document.querySelector('.close-btn'),
+              menuItems = menu.querySelectorAll('ul>li');
+        
+        const handlerMenu = () => {
+            menu.classList.toggle('active-menu');
+        };
+
+        menuBtn.addEventListener('click', handlerMenu);
+        closeBtn.addEventListener('click', handlerMenu);
+        menuItems.forEach((elem) => {
+            elem.addEventListener('click', (e) => {
+                handlerMenu();
+                e.preventDefault();
+                const link = e.target.getAttribute('href');
+                
+                document.querySelector(link).scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        }); 
+    };
+
+    toggleMenu();
+
+    const togglePopup = () => {
+        const popupBtns = document.querySelectorAll('.popup-btn'),
+              popup = document.querySelector('.popup'),
+              popupCloseBtn = document.querySelector('.popup-close');
+
+        popupBtns.forEach((elem) => {
+            elem.addEventListener('click', () => {
+                popup.style.display = 'block';
+            });
+        });
+
+        popupCloseBtn.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+
+    };
+
+    togglePopup(); 
+
+    const btnScroll = () => {
+        const btn = document.querySelector('[href="#service-block"]');
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const link = btn.getAttribute('href');
+            
+            document.querySelector(link).scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+    };
+
+    btnScroll();
 });
 
