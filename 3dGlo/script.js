@@ -70,7 +70,6 @@ window.addEventListener('DOMContentLoaded', () => {
     const toggleMenu = () => {
         const menuBtn = document.querySelector('.menu'),
               menu = document.querySelector('menu'),
-              closeBtn = document.querySelector('.close-btn'),
               menuItems = menu.querySelectorAll('ul>li');
         
         const handlerMenu = () => {
@@ -78,7 +77,15 @@ window.addEventListener('DOMContentLoaded', () => {
         };
 
         menuBtn.addEventListener('click', handlerMenu);
-        closeBtn.addEventListener('click', handlerMenu);
+
+        menu.addEventListener('click', (e) => {
+            let target = e.target;
+        
+            if (target.closest('.close-btn')) {
+                menu.classList.toggle('active-menu');
+            } 
+        });
+
         menuItems.forEach((elem) => {
             elem.addEventListener('click', (e) => {
                 handlerMenu();
@@ -95,10 +102,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
     toggleMenu();
 
+    // Модальное окно "Оставить заявку"
     const togglePopup = () => {
         const popupBtns = document.querySelectorAll('.popup-btn'),
-              popup = document.querySelector('.popup'),
-              popupCloseBtn = document.querySelector('.popup-close');
+              popup = document.querySelector('.popup');
 
         popupBtns.forEach((elem) => {
             elem.addEventListener('click', () => {
@@ -106,14 +113,25 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        popupCloseBtn.addEventListener('click', () => {
-            popup.style.display = 'none';
+        popup.addEventListener('click', (e) => {
+            let target = e.target;
+            
+            if (target.closest('.popup-close')) {
+                popup.style.display = 'none';
+            } else {
+                target = target.closest('.popup-content');
+
+                if (!target) {
+                    popup.style.display = 'none';
+                }
+            }
         });
 
     };
 
     togglePopup(); 
 
+    // Кнопка скролла на главном экране
     const btnScroll = () => {
         const btn = document.querySelector('[href="#service-block"]');
 
@@ -129,5 +147,40 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     btnScroll();
+
+    // Табы
+    const tabs = () => {
+        let serviceHeader = document.querySelector('.service-header'),
+            tabHeader = document.querySelectorAll('.service-header-tab'),
+            tabContent = document.querySelectorAll('.service-tab');
+        
+        const showContent = (index) => {
+            for(let i = 0; i < tabContent.length; i++) {
+                if (index === i) {
+                    tabHeader[i].classList.add('active');
+                    tabContent[i].classList.remove('d-none');
+                } else {
+                    tabHeader[i].classList.remove('active');
+                    tabContent[i].classList.add('d-none');
+                }
+            }
+        };
+
+        serviceHeader.addEventListener('click', (e) => {
+            let target = e.target;
+            target = target.closest('.service-header-tab');
+
+            if (target) {
+                tabHeader.forEach((elem, i) => {
+                    if (elem === target) {
+                        showContent(i);
+                    }
+                });
+            }
+
+        });
+    };
+
+    tabs();
 });
 
