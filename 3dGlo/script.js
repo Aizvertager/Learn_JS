@@ -68,36 +68,42 @@ window.addEventListener('DOMContentLoaded', () => {
     // Меню
 
     const toggleMenu = () => {
-        const menuBtn = document.querySelector('.menu'),
-              menu = document.querySelector('menu'),
-              menuItems = menu.querySelectorAll('ul>li');
-        
-        const handlerMenu = () => {
-            menu.classList.toggle('active-menu');
-        };
 
-        menuBtn.addEventListener('click', handlerMenu);
+        let menuBtn = document.querySelector('.menu'),
+            body = document.querySelector('body'),
+            menuDiv = document.querySelector('menu');
 
-        menu.addEventListener('click', (e) => {
+        document.addEventListener('click', (e) => {
             let target = e.target;
-        
-            if (target.closest('.close-btn')) {
-                menu.classList.toggle('active-menu');
-            } 
+            if(target.closest('.menu')) {
+                menuDiv.classList.toggle('active-menu');
+            } else if (!target.closest('menu')) {
+                menuDiv.classList.remove('active-menu');
+            }
         });
 
-        menuItems.forEach((elem) => {
-            elem.addEventListener('click', (e) => {
-                handlerMenu();
+        menuDiv.addEventListener('click', (e) => {
+            let target = e.target;
+            
+            if(target.classList.contains('close-btn')) {
+                menuDiv.classList.toggle('active-menu');
+            } else if (target.closest('ul>li')) {
+
+                menuDiv.classList.toggle('active-menu');
                 e.preventDefault();
-                const link = e.target.getAttribute('href');
-                
-                document.querySelector(link).scrollIntoView({
+                target = target.closest('a[href*="#"]');
+                let liId = target.getAttribute('href'),
+                    divElement = document.querySelector('' + liId);
+                //Плавный скролл
+                divElement.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'
                 });
-            });
-        }); 
+
+            }
+                
+        });
+        
     };
 
     toggleMenu();
@@ -182,5 +188,107 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     tabs();
+
+    // Слайдер
+    const slider = () => {
+
+        let slider = document.querySelector('.portfolio-content'),
+            slide = document.querySelectorAll('.portfolio-item');
+        
+        const addDots = () => {
+            let ul = document.createElement('ul');
+            ul.classList.add('portfolio-dots');
+            slider.append(ul);
+    
+            for(let i = 0; i < slide.length; i++) {
+                let dot = document.createElement('li');
+                dot.classList.add('dot');
+                ul.append(dot);
+            }
+        };            
+        addDots();
+        
+        let dots = document.querySelectorAll('.dot'),
+            currentSlide = 0,
+            interval;
+        
+        dots[0].classList.add('dot-active');
+
+        const prevSlide = (elem, index, strClass) => {
+            elem[index].classList.remove(strClass);
+        };  
+
+        const nextSlide = (elem, index, strClass) => {
+            elem[index].classList.add(strClass);
+        }; 
+
+        const autoPlaySlide = () => {
+            prevSlide(slide, currentSlide, 'portfolio-item-active');
+            prevSlide(dots, currentSlide, 'dot-active');
+            currentSlide++;
+            if (currentSlide > slide.length - 1) {
+                currentSlide = 0;
+            }
+            nextSlide(slide, currentSlide, 'portfolio-item-active');
+            nextSlide(dots, currentSlide, 'dot-active');
+        };
+
+        const startSlide = () => {
+            interval = setInterval(autoPlaySlide, 1500);
+        };
+
+        startSlide();
+
+        const stopSlide = () => {
+            clearInterval(interval);
+        };
+
+        slider.addEventListener('click', (e) => {
+            e.preventDefault();
+            let target = e.target;
+            
+            if (!target.matches('.portfolio-btn, .dot')) {
+                return;
+            }
+
+            prevSlide(slide, currentSlide, 'portfolio-item-active');
+            prevSlide(dots, currentSlide, 'dot-active');
+            
+            if (target.matches('#arrow-right')) {
+                currentSlide++;
+            } else if (target.matches('#arrow-left')) {
+                currentSlide--;
+            } else if (target.matches('.dot')) {
+                dots.forEach((elem, index) => {
+                    if (elem === target) {
+                        currentSlide = index;
+                    }
+                });
+            }
+            if (currentSlide >= slide.length) {
+                currentSlide = 0;
+            }
+            if (currentSlide < 0) {
+                currentSlide = slide.length - 1;
+            }
+
+            nextSlide(slide, currentSlide, 'portfolio-item-active');
+            nextSlide(dots, currentSlide, 'dot-active');
+        });
+
+        slider.addEventListener('mouseover', (e) => {
+            if (e.target.matches('.portfolio-btn') || e.target.matches('.dot')) {
+                stopSlide();
+            }
+        });
+
+        slider.addEventListener('mouseout', (e) => {
+            if (e.target.matches('.portfolio-btn') || e.target.matches('.dot')) {
+                startSlide();
+            }
+        });
+
+    };
+    slider();
 });
 
